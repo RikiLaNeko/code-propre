@@ -9,28 +9,51 @@ public class Inventaire {
 
 	public Inventaire() {
 		caisses = new ArrayList<>();
-		caisses.add(new Caisse("Petits objets"));
-		caisses.add(new Caisse("Moyens objets"));
-		caisses.add(new Caisse("Grands objets"));
+		caisses.add(new Caisse("Petits objets", 0, 4));
+		caisses.add(new Caisse("Moyens objets", 5, 20));
+		caisses.add(new Caisse("Grands objets", 21, Integer.MAX_VALUE));
 	}
 
+	/**
+	 * Ajoute un item dans une caisse appropriée
+	 * @param item l'item à ajouter
+	 * @throws ItemNonAccepteException si aucune caisse ne peut accepter l'item
+	 */
 	public void addItem(Item item) {
-
-		//TODO Faites évoluer ce code (idée: c'est le caisse qui doit "savoir" si elle peut accepter un objet ou non)
-		if (item.getPoids() < 5) {
-			caisses.get(0).getItems().add(item);
+		for (Caisse caisse : caisses) {
+			if (caisse.ajouterItem(item)) {
+				return;
+			}
 		}
-		if (item.getPoids() >= 5 && item.getPoids() <= 20) {
-			caisses.get(1).getItems().add(item);
-		}
-		if (item.getPoids() >= 20) {
-			caisses.get(2).getItems().add(item);
-		}
+		// Levée d'une exception si aucune caisse n'accepte l'item
+		throw new ItemNonAccepteException(item);
 	}
 
+	/**
+	 * Calcule le nombre total d'items dans toutes les caisses
+	 * @return le nombre total d'items
+	 */
 	public int taille() {
-		
-		//TODO faites évoluer ce code.
-		return caisses.get(0).getItems().size() + caisses.get(1).getItems().size() + caisses.get(2).getItems().size();
+		int total = 0;
+		for (Caisse caisse : caisses) {
+			total += caisse.nombreItems();
+		}
+		return total;
+	}
+
+	/**
+	 * Getter pour l'attribut caisses
+	 * @return the caisses
+	 */
+	public List<Caisse> getCaisses() {
+		return caisses;
+	}
+
+	/**
+	 * Ajoute une nouvelle caisse à l'inventaire
+	 * @param caisse la caisse à ajouter
+	 */
+	public void ajouterCaisse(Caisse caisse) {
+		caisses.add(caisse);
 	}
 }
